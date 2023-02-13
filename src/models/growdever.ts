@@ -1,9 +1,11 @@
-interface GrowdeverDetalheDTO {
+import { randomUUID } from "node:crypto";
+
+export interface GrowdeverDetalheDTO {
   id: string;
   nome: string;
   dataNascimento: string;
   cpf: string;
-  status: string;
+  status: StatusGrowdever;
   habilidades: Array<string>;
 }
 
@@ -11,8 +13,14 @@ interface GrowdeverDetalheDTO {
 interface GrowdeverModelDTO {
   id: string;
   nome: string;
-  status: string;
+  status: StatusGrowdever;
   habilidades: Array<string>;
+}
+
+export enum StatusGrowdever {
+  CANCELADO = "CANCELADO",
+  ESTUDANDO = "ESTUDANDO",
+  FORMADO = "FORMADO",
 }
 
 export class Growdever {
@@ -40,7 +48,7 @@ export class Growdever {
     return this._cpf;
   }
 
-  private _status: "estudando" | "cancelado" | "formado";
+  private _status: StatusGrowdever;
 
   public get status() {
     return this._status;
@@ -53,18 +61,39 @@ export class Growdever {
   }
 
   constructor(
-    id: string,
     nome: string,
     dataNascimento: string,
     cpf: string,
     habilidades: Array<string>
   ) {
-    this._id = id;
+    this._id = randomUUID();
     this._nome = nome;
     this._dataNascimento = dataNascimento;
     this._cpf = cpf;
-    this._status = "estudando";
+    this._status = StatusGrowdever.ESTUDANDO;
     this._habilidades = habilidades;
+  }
+
+  static criarAPartirDoBanco(growdeverDTO: GrowdeverDetalheDTO) {
+    const growdever = new Growdever(
+      growdeverDTO.nome,
+      growdeverDTO.dataNascimento,
+      growdeverDTO.cpf,
+      growdeverDTO.habilidades
+    );
+
+    growdever._id = growdeverDTO.id;
+    growdever._status = growdeverDTO.status;
+
+    return growdever;
+  }
+
+  atualizar(nome: string, dataNascimento: string, status: StatusGrowdever) {
+    if (nome) this._nome = nome;
+
+    if (dataNascimento) this._dataNascimento = dataNascimento;
+
+    if (status) this._status = status;
   }
 
   paraDetalheJSON(): GrowdeverDetalheDTO {
