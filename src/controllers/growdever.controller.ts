@@ -7,16 +7,6 @@ export class GrowdeverController {
   cadastrarGrowdever(request: Request, response: Response) {
     const { nome, dataNascimento, cpf, habilidades } = request.body;
 
-    if (!nome || !dataNascimento || !cpf || !habilidades) {
-      return response
-        .status(400)
-        .json("Verifique os dados e tente novamente :(");
-    }
-
-    if (!cpfValidator.isValid(cpf)) {
-      return response.status(400).json("Cpf não valido :(");
-    }
-
     const listaAtual = buscarGrowdeversDB();
 
     if (listaAtual.some((growdever) => growdever.cpf === cpf)) {
