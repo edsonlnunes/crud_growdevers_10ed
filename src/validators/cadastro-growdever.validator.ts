@@ -55,7 +55,7 @@ export const cadastroGrowdeverValidator = (
 
     req.body = novoCorpo;
 
-    next();
+    return next();
   } catch (error: any) {
     if (error instanceof ZodError) {
       return res.status(400).json(

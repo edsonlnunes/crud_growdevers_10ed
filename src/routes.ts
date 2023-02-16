@@ -1,6 +1,10 @@
 import express, { Response, Request } from "express";
 import { GrowdeverController } from "./controllers/growdever.controller";
-import { cadastroGrowdeverValidator } from "./validators";
+import {
+  cadastroGrowdeverValidator,
+  atualizaGrowdeverValidator,
+  verificaGrowdeverExisteValidator,
+} from "./validators";
 
 export = () => {
   const router = express.Router();
@@ -16,9 +20,22 @@ export = () => {
     growdeverController.cadastrarGrowdever
   );
   router.get("/growdevers", growdeverController.buscarGrowdevers);
-  router.get("/growdevers/:id", growdeverController.buscarGrowdeverPorId);
-  router.delete("/growdevers/:id", growdeverController.deletarGrowdever);
-  router.put("/growdevers/:id", growdeverController.atualizarGrowdever);
+  router.get(
+    "/growdevers/:id",
+    verificaGrowdeverExisteValidator,
+    growdeverController.buscarGrowdeverPorId
+  );
+  router.delete(
+    "/growdevers/:id",
+    verificaGrowdeverExisteValidator,
+    growdeverController.deletarGrowdever
+  );
+  router.put(
+    "/growdevers/:id",
+    verificaGrowdeverExisteValidator,
+    atualizaGrowdeverValidator,
+    growdeverController.atualizarGrowdever
+  );
 
   return router;
 };

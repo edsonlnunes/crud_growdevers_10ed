@@ -50,15 +50,12 @@ export class GrowdeverController {
 
   buscarGrowdeverPorId(request: Request, response: Response) {
     const { id } = request.params;
+
     const growdeverFiltrado = buscarGrowdeversDB().find(
       (growdever) => growdever.id === id
     );
-    if (!growdeverFiltrado) {
-      return response
-        .status(404)
-        .json("Growdever não encontrado. Verifique o ID e tente novamente");
-    }
-    return response.status(200).json(growdeverFiltrado.paraDetalheJSON());
+
+    return response.status(200).json(growdeverFiltrado?.paraDetalheJSON());
   }
 
   deletarGrowdever(request: Request, response: Response) {
@@ -67,11 +64,7 @@ export class GrowdeverController {
     const growdeverIndex = listaAtual.findIndex(
       (growdever) => growdever.id === id
     );
-    if (growdeverIndex === -1) {
-      return response
-        .status(404)
-        .json("Growdever não localizado, verifique o ID e tente novamente.");
-    }
+
     listaAtual.splice(growdeverIndex, 1);
     salvarGrowdeversDB(listaAtual);
     return response.status(204).json();
@@ -80,28 +73,17 @@ export class GrowdeverController {
   atualizarGrowdever(request: Request, response: Response) {
     const { id } = request.params;
     const { nome, dataNascimento, status } = request.body;
-    if (status) {
-      if (
-        !Object.values(StatusGrowdever).some((s) => s === status.toUpperCase())
-      ) {
-        return response.status(400).json("O Status informado é inválido");
-      }
-    }
+
     const listaAtual = buscarGrowdeversDB();
+
     const growdeverIndex = listaAtual.findIndex(
       (growdever) => growdever.id === id
     );
-    if (growdeverIndex === -1) {
-      return response
-        .status(404)
-        .json("Growdever não localizado, verifique o ID e tente novamente.");
-    }
-    listaAtual[growdeverIndex].atualizar(
-      nome,
-      dataNascimento,
-      status?.toUpperCase()
-    );
+
+    listaAtual[growdeverIndex].atualizar(nome, dataNascimento, status);
+
     salvarGrowdeversDB(listaAtual);
+
     return response
       .status(200)
       .json(listaAtual[growdeverIndex].paraDetalheJSON());
