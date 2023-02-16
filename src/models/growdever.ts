@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { HabilidadeJaExiste } from "../errors/habilidade-ja-existe.error";
 
 export interface GrowdeverDetalheDTO {
   id: string;
@@ -57,7 +58,7 @@ export class Growdever {
   private _habilidades: Array<string>;
 
   public get habilidades() {
-    return this._habilidades;
+    return [...this._habilidades];
   }
 
   constructor(
@@ -94,6 +95,17 @@ export class Growdever {
     if (dataNascimento) this._dataNascimento = dataNascimento;
 
     if (status) this._status = status;
+  }
+
+  addNovaHabilidade(habilidade: string) {
+    const habilidadeJaExiste = this._habilidades.some(
+      (h) => h.toUpperCase() === habilidade.toUpperCase()
+    );
+
+    if (habilidadeJaExiste)
+      throw new HabilidadeJaExiste("Habilidade já existe");
+
+    this._habilidades.push(habilidade);
   }
 
   paraDetalheJSON(): GrowdeverDetalheDTO {

@@ -1,5 +1,6 @@
 import express, { Response, Request } from "express";
 import { GrowdeverController } from "./controllers/growdever.controller";
+import { GrowdeverSkillsController } from "./controllers/growdever-skills.controller";
 import {
   cadastroGrowdeverValidator,
   atualizaGrowdeverValidator,
@@ -35,6 +36,13 @@ export = () => {
     verificaGrowdeverExisteValidator,
     atualizaGrowdeverValidator,
     growdeverController.atualizarGrowdever
+  );
+
+  const growdeverSkillsController = new GrowdeverSkillsController();
+  router.put(
+    "/growdevers/:id/skills",
+    verificaGrowdeverExisteValidator,
+    growdeverSkillsController.addGrowdeverSkill
   );
 
   return router;
