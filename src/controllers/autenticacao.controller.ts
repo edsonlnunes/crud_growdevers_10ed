@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import { buscarGrowdeversDB } from "../db/growdevers";
+import config from "../config";
 
 export class AutenticacaoController {
   async entrar(request: Request, response: Response) {
@@ -24,7 +25,7 @@ export class AutenticacaoController {
 
     const token = jwt.sign(
       { id: growdever.id, cpf: growdever.cpf },
-      "growFullStack10ed",
+      config.jwtPrivateKey,
       { expiresIn: "1h" }
     );
 

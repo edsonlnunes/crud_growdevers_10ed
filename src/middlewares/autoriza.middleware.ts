@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import config from "../config";
 
 export default (request: Request, response: Response, next: NextFunction) => {
   const authorization = request.headers.authorization;
@@ -17,7 +18,7 @@ export default (request: Request, response: Response, next: NextFunction) => {
   }
 
   try {
-    jwt.verify(token, "growFullStack10ed");
+    jwt.verify(token, config.jwtPrivateKey);
     next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {

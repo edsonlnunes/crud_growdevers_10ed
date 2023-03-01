@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { buscarGrowdeversDB, salvarGrowdeversDB } from "../db/growdevers";
 import { Growdever, StatusGrowdever } from "../models/growdever";
+import config from "../config";
 
 export class GrowdeverController {
   async cadastrarGrowdever(request: Request, response: Response) {
@@ -15,7 +16,10 @@ export class GrowdeverController {
 
     const senhaPadrao = `${cpf.slice(0, 3)}@${new Date().getFullYear()}`;
 
-    const senhaEncriptografada = await bcrypt.hash(senhaPadrao, 10);
+    const senhaEncriptografada = await bcrypt.hash(
+      senhaPadrao,
+      config.bcryptSalt
+    );
 
     const growdever = new Growdever(
       nome,
