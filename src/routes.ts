@@ -6,6 +6,8 @@ import {
   atualizaGrowdeverValidator,
   verificaGrowdeverExisteValidator,
 } from "./validators";
+import { AutenticacaoController } from "./controllers/autenticacao.controller";
+import autoriza from "./middlewares/autoriza.middleware";
 
 export = () => {
   const router = express.Router();
@@ -17,6 +19,7 @@ export = () => {
   const growdeverController = new GrowdeverController();
   router.post(
     "/growdevers",
+    autoriza,
     cadastroGrowdeverValidator,
     growdeverController.cadastrarGrowdever
   );
@@ -28,11 +31,13 @@ export = () => {
   );
   router.delete(
     "/growdevers/:id",
+    autoriza,
     verificaGrowdeverExisteValidator,
     growdeverController.deletarGrowdever
   );
   router.put(
     "/growdevers/:id",
+    autoriza,
     verificaGrowdeverExisteValidator,
     atualizaGrowdeverValidator,
     growdeverController.atualizarGrowdever
@@ -41,9 +46,13 @@ export = () => {
   const growdeverSkillsController = new GrowdeverSkillsController();
   router.put(
     "/growdevers/:id/skills",
+    autoriza,
     verificaGrowdeverExisteValidator,
     growdeverSkillsController.addGrowdeverSkill
   );
+
+  const autController = new AutenticacaoController();
+  router.post("/login", autController.entrar);
 
   return router;
 };

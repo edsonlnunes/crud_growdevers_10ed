@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { cpf as cpfValidator } from "cpf-cnpj-validator";
+import bcrypt from "bcrypt";
 import { buscarGrowdeversDB, salvarGrowdeversDB } from "../db/growdevers";
 import { Growdever, StatusGrowdever } from "../models/growdever";
 
 export class GrowdeverController {
-  cadastrarGrowdever(request: Request, response: Response) {
+  async cadastrarGrowdever(request: Request, response: Response) {
     const { nome, dataNascimento, cpf, habilidades } = request.body;
 
     const listaAtual = buscarGrowdeversDB();
@@ -13,7 +13,17 @@ export class GrowdeverController {
       return response.status(400).json("Este cpf já está cadastrado!");
     }
 
-    const growdever = new Growdever(nome, dataNascimento, cpf, habilidades);
+    const senhaPadrao = `${cpf.slice(0, 3)}@${new Date().getFullYear()}`;
+
+    const senhaEncriptografada = await bcrypt.hash(senhaPadrao, 10);
+
+    const growdever = new Growdever(
+      nome,
+      dataNascimento,
+      cpf,
+      habilidades,
+      senhaEncriptografada
+    );
 
     listaAtual.push(growdever);
 

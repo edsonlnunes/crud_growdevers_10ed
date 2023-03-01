@@ -8,6 +8,7 @@ export interface GrowdeverDetalheDTO {
   cpf: string;
   status: StatusGrowdever;
   habilidades: Array<string>;
+  senha?: string;
 }
 
 // DTO = DATA TRANSFER OBJECT
@@ -49,6 +50,12 @@ export class Growdever {
     return this._cpf;
   }
 
+  private _senha: string;
+
+  public get senha(): string {
+    return this._senha;
+  }
+
   private _status: StatusGrowdever;
 
   public get status() {
@@ -65,7 +72,8 @@ export class Growdever {
     nome: string,
     dataNascimento: string,
     cpf: string,
-    habilidades: Array<string>
+    habilidades: Array<string>,
+    senha: string
   ) {
     this._id = randomUUID();
     this._nome = nome;
@@ -73,6 +81,7 @@ export class Growdever {
     this._cpf = cpf;
     this._status = StatusGrowdever.ESTUDANDO;
     this._habilidades = habilidades;
+    this._senha = senha;
   }
 
   static criarAPartirDoBanco(growdeverDTO: GrowdeverDetalheDTO) {
@@ -80,7 +89,8 @@ export class Growdever {
       growdeverDTO.nome,
       growdeverDTO.dataNascimento,
       growdeverDTO.cpf,
-      growdeverDTO.habilidades
+      growdeverDTO.habilidades,
+      growdeverDTO.senha!
     );
 
     growdever._id = growdeverDTO.id;
@@ -108,7 +118,7 @@ export class Growdever {
     this._habilidades.push(habilidade);
   }
 
-  paraDetalheJSON(): GrowdeverDetalheDTO {
+  paraDetalheJSON(incluirSenha: boolean = false): GrowdeverDetalheDTO {
     return {
       id: this._id,
       nome: this._nome,
@@ -116,6 +126,7 @@ export class Growdever {
       cpf: this._cpf,
       status: this._status,
       habilidades: this._habilidades,
+      senha: incluirSenha ? this._senha : undefined,
     };
   }
 

@@ -20,6 +20,6 @@ export function buscarGrowdeversDB(): Array<Growdever> {
 export function salvarGrowdeversDB(lista: Array<Growdever>) {
   fs.writeFileSync(
     caminho,
-    JSON.stringify(lista.map((growdever) => growdever.paraDetalheJSON()))
+    JSON.stringify(lista.map((growdever) => growdever.paraDetalheJSON(true)))
   );
 }
