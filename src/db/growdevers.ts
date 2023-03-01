@@ -3,7 +3,7 @@ import fs from "node:fs";
 
 // export const listaGrowdevers: Array<Growdever> = [];
 
-const caminho = `${__dirname}\\db.json`;
+const caminho = `db.json`;
 
 export function buscarGrowdeversDB(): Array<Growdever> {
   const conteudoBuffer = fs.readFileSync(caminho);
