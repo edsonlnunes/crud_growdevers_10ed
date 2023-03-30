@@ -19,7 +19,7 @@ export = () => {
   const growdeverController = new GrowdeverController();
   router.post(
     "/growdevers",
-    autoriza,
+    // autoriza,
     cadastroGrowdeverValidator,
     growdeverController.cadastrarGrowdever
   );
@@ -37,7 +37,7 @@ export = () => {
   );
   router.put(
     "/growdevers/:id",
-    autoriza,
+    // autoriza,
     verificaGrowdeverExisteValidator,
     atualizaGrowdeverValidator,
     growdeverController.atualizarGrowdever

@@ -1,20 +1,18 @@
 import { Request, Response, NextFunction } from "express";
-import { buscarGrowdeversDB } from "../db/growdevers";
+import db from "../db";
 
-export const verificaGrowdeverExisteValidator = (
+export const verificaGrowdeverExisteValidator = async (
   request: Request,
   response: Response,
   next: NextFunction
 ) => {
   const { id } = request.params;
 
-  const listaDeGrowdevers = buscarGrowdeversDB();
-
-  const growdeverExiste = listaDeGrowdevers.some(
-    (growdever) => growdever.id === id
+  const resultadoExiste = await db.query(
+    `SELECT * FROM growdevers WHERE id = '${id}'`
   );
 
-  if (!growdeverExiste) {
+  if (resultadoExiste.rowCount === 0) {
     return response.status(404).json("Esse growdever nunca foi cadastrado.");
   }
 
