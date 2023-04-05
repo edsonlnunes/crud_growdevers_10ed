@@ -1,10 +1,11 @@
 import { randomUUID } from "node:crypto";
+import { GrowdeverEntity } from "../db/entities/growdever.entity";
 import { HabilidadeJaExiste } from "../errors/habilidade-ja-existe.error";
 
 export interface GrowdeverDetalheDTO {
   id: string;
   nome: string;
-  dataNascimento: string;
+  dataNascimento: Date;
   cpf: string;
   status: StatusGrowdever;
   habilidades: Array<string>;
@@ -38,7 +39,7 @@ export class Growdever {
     return this._nome;
   }
 
-  private _dataNascimento: string;
+  private _dataNascimento: Date;
 
   public get dataNascimento() {
     return this._dataNascimento;
@@ -70,7 +71,7 @@ export class Growdever {
 
   constructor(
     nome: string,
-    dataNascimento: string,
+    dataNascimento: Date,
     cpf: string,
     habilidades: Array<string>,
     senha: string
@@ -84,22 +85,22 @@ export class Growdever {
     this._senha = senha;
   }
 
-  static criarAPartirDoBanco(growdeverDTO: GrowdeverDetalheDTO) {
+  static criarAPartirDoBanco(entity: GrowdeverEntity) {
     const growdever = new Growdever(
-      growdeverDTO.nome,
-      growdeverDTO.dataNascimento,
-      growdeverDTO.cpf,
-      growdeverDTO.habilidades,
-      growdeverDTO.senha!
+      entity.nome,
+      entity.dataNascimento,
+      entity.cpf,
+      entity.skills.split(","),
+      entity.senha
     );
 
-    growdever._id = growdeverDTO.id;
-    growdever._status = growdeverDTO.status;
+    growdever._id = entity.id;
+    growdever._status = entity.status as any;
 
     return growdever;
   }
 
-  atualizar(nome: string, dataNascimento: string, status: StatusGrowdever) {
+  atualizar(nome: string, dataNascimento: Date, status: StatusGrowdever) {
     if (nome) this._nome = nome;
 
     if (dataNascimento) this._dataNascimento = dataNascimento;

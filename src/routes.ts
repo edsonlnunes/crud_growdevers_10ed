@@ -17,6 +17,7 @@ export = () => {
   );
 
   const growdeverController = new GrowdeverController();
+
   router.post(
     "/growdevers",
     // autoriza,
@@ -31,7 +32,7 @@ export = () => {
   );
   router.delete(
     "/growdevers/:id",
-    autoriza,
+    // autoriza,
     verificaGrowdeverExisteValidator,
     growdeverController.deletarGrowdever
   );
