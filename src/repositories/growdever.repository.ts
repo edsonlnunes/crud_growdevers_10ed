@@ -12,6 +12,7 @@ export class GrowdeverRepository {
         where: {
           id,
         },
+        relations: ["skills"],
       }
     );
 
@@ -32,9 +33,12 @@ export class GrowdeverRepository {
   }
 
   async removerPeloId(id: string): Promise<boolean> {
-    const resultado = await appDataSource.query(`
-        DELETE FROM growdevers WHERE id = '${id}'
-    `);
+    await appDataSource.manager.delete(GrowdeverEntity, {
+      id,
+    });
+
+    // remoção lógica - softDelete
+    // remoção fisica - delete
 
     return true;
   }
@@ -56,7 +60,6 @@ export class GrowdeverRepository {
       senha: growdever.senha,
       status: growdever.status,
       dataNascimento: growdever.dataNascimento,
-      skills: growdever.habilidades.join(),
     });
 
     await appDataSource.manager.save(growdeverEntity);
@@ -83,11 +86,27 @@ export class GrowdeverRepository {
   }
 
   async atualizarGrowdever(growdever: Growdever): Promise<Promise<boolean>> {
-    const resultado = await db.query(
-      `UPDATE growdevers SET nome = $1, datanascimento = $2, status = $3 WHERE id = $4`,
-      [growdever.nome, growdever.dataNascimento, growdever.status, growdever.id]
+    await appDataSource.manager.update(
+      GrowdeverEntity,
+      { id: growdever.id },
+      {
+        nome: growdever.nome,
+        dataNascimento: growdever.dataNascimento,
+        status: growdever.status,
+      }
     );
 
-    return resultado.rowCount > 0;
+    // const growdeverEntity = (await appDataSource.manager.findOne(
+    //   GrowdeverEntity,
+    //   { where: { id: growdever.id } }
+    // )) as GrowdeverEntity;
+
+    // growdeverEntity.nome = growdever.nome;
+    // growdeverEntity.dataNascimento = growdever.dataNascimento;
+    // growdeverEntity.status = growdever.status;
+
+    // await appDataSource.manager.save(growdeverEntity);
+
+    return true;
   }
 }

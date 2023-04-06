@@ -63,7 +63,7 @@ export class Growdever {
     return this._status;
   }
 
-  private _habilidades: Array<string>;
+  private _habilidades!: Array<string>;
 
   public get habilidades() {
     return [...this._habilidades];
@@ -73,7 +73,7 @@ export class Growdever {
     nome: string,
     dataNascimento: Date,
     cpf: string,
-    habilidades: Array<string>,
+    // habilidades: Array<string>,
     senha: string
   ) {
     this._id = randomUUID();
@@ -81,7 +81,7 @@ export class Growdever {
     this._dataNascimento = dataNascimento;
     this._cpf = cpf;
     this._status = StatusGrowdever.ESTUDANDO;
-    this._habilidades = habilidades;
+    this._habilidades = [];
     this._senha = senha;
   }
 
@@ -90,7 +90,7 @@ export class Growdever {
       entity.nome,
       entity.dataNascimento,
       entity.cpf,
-      entity.skills.split(","),
+      // entity.skills.split(","),
       entity.senha
     );
 
