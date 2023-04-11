@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import { Growdever } from "../models/growdever";
-import config from "../config";
-import { GrowdeverRepository } from "../repositories/growdever.repository";
+import config from "../../../shared/config";
+import { GrowdeverRepository } from "../repositories";
+import { StatusGrowdever } from "../enums";
 
 export class GrowdeverController {
   async cadastrarGrowdever(request: Request, response: Response) {
@@ -23,17 +23,16 @@ export class GrowdeverController {
       config.bcryptSalt
     );
 
-    const growdever = new Growdever(
+    const growdever = await repositorio.criaGrowdever({
       nome,
       dataNascimento,
       cpf,
+      senha: senhaCriptografada,
+      status: StatusGrowdever.ESTUDANDO,
       habilidades,
-      senhaCriptografada
-    );
+    });
 
-    await repositorio.criaGrowdever(growdever);
-
-    return response.status(201).json(growdever.paraDetalheJSON());
+    return response.status(201).json(growdever);
   }
 
   async buscarGrowdevers(request: Request, response: Response) {
@@ -43,7 +42,7 @@ export class GrowdeverController {
 
     const growdevers = await repositorio.listarGrowdevers(status, nome);
 
-    return response.status(200).json(growdevers.map((g) => g.paraModelJson()));
+    return response.status(200).json(growdevers);
   }
 
   async buscarGrowdeverPorId(request: Request, response: Response) {
@@ -52,7 +51,7 @@ export class GrowdeverController {
     const repositorio = new GrowdeverRepository();
     const growdever = await repositorio.buscarPorId(id);
 
-    return response.status(200).json(growdever.paraDetalheJSON());
+    return response.status(200).json(growdever);
   }
 
   async deletarGrowdever(request: Request, response: Response) {
@@ -70,12 +69,13 @@ export class GrowdeverController {
 
     const repositorio = new GrowdeverRepository();
 
-    const growdever = await repositorio.buscarPorId(id);
+    await repositorio.atualizarGrowdever({
+      id: id,
+      nome,
+      dataNascimento,
+      status,
+    });
 
-    growdever.atualizar(nome, dataNascimento, status);
-
-    await repositorio.atualizarGrowdever(growdever);
-
-    return response.status(200).json(growdever.paraDetalheJSON());
+    return response.status(200).json();
   }
 }

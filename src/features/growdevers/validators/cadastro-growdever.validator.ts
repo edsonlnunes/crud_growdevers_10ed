@@ -11,10 +11,12 @@ export const cadastroGrowdeverValidator = (
   const msgCampoObrigatorio = "Campo obrigatório";
 
   const growdeverScheme = z.object({
-    nome: z.string({
-      invalid_type_error: msgFormatoInvalido,
-      required_error: msgCampoObrigatorio,
-    }),
+    nome: z
+      .string({
+        invalid_type_error: msgFormatoInvalido,
+        required_error: msgCampoObrigatorio,
+      })
+      .min(2),
     cpf: z
       .string({
         invalid_type_error: msgFormatoInvalido,

@@ -1,4 +1,5 @@
 import { Column, PrimaryColumn, Entity, OneToMany } from "typeorm";
+import { StatusGrowdever } from "../../../features/growdevers/enums";
 import { GrowdeverSkillEntity } from "./growdever-skill.entity";
 
 @Entity({ name: "growdevers" })
@@ -18,15 +19,15 @@ export class GrowdeverEntity {
   @Column({ type: "text", nullable: false })
   senha!: string;
 
-  @Column({ type: "varchar", length: 30, nullable: false })
-  status!: string;
+  @Column({ type: "enum", enum: StatusGrowdever, nullable: false })
+  status!: StatusGrowdever;
 
   @OneToMany(() => GrowdeverSkillEntity, (entity) => entity.growdever)
-  skills?: GrowdeverSkillEntity[];
+  habilidadesDoGrowdever?: GrowdeverSkillEntity[];
 }
 
 // UM growdever possui MUITAS skills
-// pertencem a UM growdever
+// Muitas skills pertencem a UM growdever
 
 //  {
 //   id: "ID_GROW_1"

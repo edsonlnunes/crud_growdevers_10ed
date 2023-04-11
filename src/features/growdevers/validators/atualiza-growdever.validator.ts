@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { z, ZodError } from "zod";
-import { StatusGrowdever } from "../models/growdever";
+import { StatusGrowdever } from "../enums";
 
 export const atualizaGrowdeverValidator = (
   req: Request,
@@ -11,9 +11,11 @@ export const atualizaGrowdeverValidator = (
 
   const growdeverScheme = z
     .object({
-      nome: z.string({
-        invalid_type_error: msgFormatoInvalido,
-      }),
+      nome: z
+        .string({
+          invalid_type_error: msgFormatoInvalido,
+        })
+        .min(2),
 
       dataNascimento: z.string({
         invalid_type_error: msgFormatoInvalido,

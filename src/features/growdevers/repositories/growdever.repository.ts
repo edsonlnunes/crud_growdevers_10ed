@@ -1,26 +1,42 @@
-import db from "../db";
-import { appDataSource } from "../db/data-source";
-import { GrowdeverEntity } from "../db/entities/growdever.entity";
-import { Growdever } from "../models/growdever";
+import { randomUUID } from "crypto";
 import { ILike } from "typeorm";
+import { appDataSource } from "../../../shared/db/data-source";
+import { GrowdeverEntity } from "../../../shared/db/entities";
+import {
+  AtualizarGrowdeverDTO,
+  CriarGrowdeverDTO,
+  GrowdeverDetalheDTO,
+  GrowdeverListaDTO,
+} from "../dtos";
+import { StatusGrowdever } from "../enums";
 
 export class GrowdeverRepository {
-  async buscarPorId(id: string): Promise<Growdever | undefined> {
+  async buscarPorId(id: string): Promise<GrowdeverDetalheDTO | undefined> {
     const growdeverEntity = await appDataSource.manager.findOne(
       GrowdeverEntity,
       {
         where: {
           id,
         },
-        relations: ["skills"],
+        relations: ["habilidadesDoGrowdever"],
       }
     );
 
     if (!growdeverEntity) return undefined;
 
-    const growdever = Growdever.criarAPartirDoBanco(growdeverEntity);
-
-    return growdever;
+    return {
+      id: growdeverEntity.id,
+      cpf: growdeverEntity.cpf,
+      nome: growdeverEntity.nome,
+      status: growdeverEntity.status,
+      dataNascimento: growdeverEntity.dataNascimento,
+      habilidades: growdeverEntity.habilidadesDoGrowdever!.map(
+        (habilidade) => ({
+          id: habilidade.id,
+          nome: habilidade.nome,
+        })
+      ),
+    };
   }
 
   async existePeloId(id: string): Promise<boolean> {
@@ -52,9 +68,11 @@ export class GrowdeverRepository {
     return existe;
   }
 
-  async criaGrowdever(growdever: Growdever): Promise<boolean> {
+  async criaGrowdever(
+    growdever: CriarGrowdeverDTO
+  ): Promise<GrowdeverDetalheDTO> {
     const growdeverEntity = appDataSource.manager.create(GrowdeverEntity, {
-      id: growdever.id,
+      id: randomUUID(),
       cpf: growdever.cpf,
       nome: growdever.nome,
       senha: growdever.senha,
@@ -64,28 +82,49 @@ export class GrowdeverRepository {
 
     await appDataSource.manager.save(growdeverEntity);
 
-    return true;
+    return {
+      id: growdeverEntity.id,
+      cpf: growdeverEntity.cpf,
+      nome: growdeverEntity.nome,
+      status: growdeverEntity.status,
+      dataNascimento: growdeverEntity.dataNascimento,
+      habilidades: [],
+    };
   }
 
-  async listarGrowdevers(status?: string, nome?: string): Promise<Growdever[]> {
+  async listarGrowdevers(
+    status?: StatusGrowdever,
+    nome?: string
+  ): Promise<GrowdeverListaDTO[]> {
     const growdeversEntities = await appDataSource.manager.find(
       GrowdeverEntity,
       {
         where: {
           nome: ILike(`%${nome ?? ""}%`),
-          status: ILike(`%${status ?? ""}%`),
+          status,
         },
+        relations: ["habilidadesDoGrowdever"],
       }
     );
 
-    const growdevers = growdeversEntities.map((growEntity) =>
-      Growdever.criarAPartirDoBanco(growEntity)
+    const growdevers = growdeversEntities.map<GrowdeverListaDTO>(
+      (growEntity) => ({
+        id: growEntity.id,
+        nome: growEntity.nome,
+        status: growEntity.status,
+        habilidades: growEntity.habilidadesDoGrowdever!.map((habilEntity) => ({
+          id: habilEntity.id,
+          nome: habilEntity.nome,
+        })),
+      })
     );
 
     return growdevers;
   }
 
-  async atualizarGrowdever(growdever: Growdever): Promise<Promise<boolean>> {
+  async atualizarGrowdever(
+    growdever: AtualizarGrowdeverDTO
+  ): Promise<Promise<boolean>> {
     await appDataSource.manager.update(
       GrowdeverEntity,
       { id: growdever.id },

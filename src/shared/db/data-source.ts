@@ -12,5 +12,5 @@ export const appDataSource = new DataSource({
     rejectUnauthorized: false,
   },
   entities: [GrowdeverEntity, GrowdeverSkillEntity],
-  synchronize: true,
+  synchronize: false,
 });

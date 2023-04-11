@@ -1,13 +1,13 @@
 import express, { Response, Request } from "express";
-import { GrowdeverController } from "./controllers/growdever.controller";
-import { GrowdeverSkillsController } from "./controllers/growdever-skills.controller";
+import { GrowdeverController } from "./features/growdevers/controllers/growdever.controller";
+import { GrowdeverSkillsController } from "./features/growdevers/controllers/growdever-skills.controller";
 import {
   cadastroGrowdeverValidator,
   atualizaGrowdeverValidator,
   verificaGrowdeverExisteValidator,
-} from "./validators";
-import { AutenticacaoController } from "./controllers/autenticacao.controller";
-import autoriza from "./middlewares/autoriza.middleware";
+} from "./features/growdevers/validators";
+import { AutenticacaoController } from "./features/authentication/controllers/autenticacao.controller";
+import autoriza from "./shared/middlewares/autoriza.middleware";
 
 export = () => {
   const router = express.Router();

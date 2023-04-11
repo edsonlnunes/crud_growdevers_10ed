@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { GrowdeverRepository } from "../repositories/growdever.repository";
+import { GrowdeverRepository } from "../repositories";
 
 export const verificaGrowdeverExisteValidator = async (
   request: Request,

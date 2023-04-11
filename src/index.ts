@@ -4,7 +4,7 @@ import express from "express";
 import routes from "./routes";
 import cors from "cors";
 import "dotenv/config";
-import { appDataSource } from "./db/data-source";
+import { appDataSource } from "./shared/db/data-source";
 
 const app = express();
 app.use(express.json());
