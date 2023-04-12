@@ -12,7 +12,9 @@ export class GrowdeverSkillEntity {
   @Column({ name: "growdever_id", type: "uuid", nullable: false })
   growdeverId!: string;
 
-  @ManyToOne(() => GrowdeverEntity, (entity) => entity.habilidadesDoGrowdever)
+  @ManyToOne(() => GrowdeverEntity, (entity) => entity.habilidadesDoGrowdever, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "growdever_id", referencedColumnName: "id" })
   growdever?: GrowdeverEntity;
 }

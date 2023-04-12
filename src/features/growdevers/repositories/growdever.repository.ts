@@ -1,12 +1,16 @@
 import { randomUUID } from "crypto";
 import { ILike } from "typeorm";
 import { appDataSource } from "../../../shared/db/data-source";
-import { GrowdeverEntity } from "../../../shared/db/entities";
+import {
+  GrowdeverEntity,
+  GrowdeverSkillEntity,
+} from "../../../shared/db/entities";
 import {
   AtualizarGrowdeverDTO,
   CriarGrowdeverDTO,
   GrowdeverDetalheDTO,
   GrowdeverListaDTO,
+  HabilidadeDetalheDTO,
 } from "../dtos";
 import { StatusGrowdever } from "../enums";
 
@@ -71,25 +75,53 @@ export class GrowdeverRepository {
   async criaGrowdever(
     growdever: CriarGrowdeverDTO
   ): Promise<GrowdeverDetalheDTO> {
-    const growdeverEntity = appDataSource.manager.create(GrowdeverEntity, {
-      id: randomUUID(),
-      cpf: growdever.cpf,
-      nome: growdever.nome,
-      senha: growdever.senha,
-      status: growdever.status,
-      dataNascimento: growdever.dataNascimento,
-    });
+    const queryRunner = appDataSource.createQueryRunner();
+    await queryRunner.startTransaction();
 
-    await appDataSource.manager.save(growdeverEntity);
+    try {
+      const growdeverEntity = queryRunner.manager.create(GrowdeverEntity, {
+        id: randomUUID(),
+        cpf: growdever.cpf,
+        nome: growdever.nome,
+        senha: growdever.senha,
+        status: growdever.status,
+        dataNascimento: growdever.dataNascimento,
+      });
 
-    return {
-      id: growdeverEntity.id,
-      cpf: growdeverEntity.cpf,
-      nome: growdeverEntity.nome,
-      status: growdeverEntity.status,
-      dataNascimento: growdeverEntity.dataNascimento,
-      habilidades: [],
-    };
+      await queryRunner.manager.save(growdeverEntity);
+
+      const skills: HabilidadeDetalheDTO[] = [];
+
+      for (const skill of growdever.habilidades) {
+        const novaSkill = queryRunner.manager.create(GrowdeverSkillEntity, {
+          id: randomUUID(),
+          nome: skill,
+          growdeverId: growdeverEntity.id,
+        });
+
+        await queryRunner.manager.save(novaSkill);
+
+        skills.push({
+          id: novaSkill.id,
+          nome: novaSkill.nome,
+        });
+      }
+
+      await queryRunner.commitTransaction();
+      await queryRunner.release();
+
+      return {
+        id: growdeverEntity.id,
+        cpf: growdeverEntity.cpf,
+        nome: growdeverEntity.nome,
+        status: growdeverEntity.status,
+        dataNascimento: growdeverEntity.dataNascimento,
+        habilidades: skills,
+      };
+    } catch (error) {
+      queryRunner.rollbackTransaction();
+      throw error;
+    }
   }
 
   async listarGrowdevers(

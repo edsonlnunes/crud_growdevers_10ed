@@ -22,7 +22,9 @@ export class GrowdeverEntity {
   @Column({ type: "enum", enum: StatusGrowdever, nullable: false })
   status!: StatusGrowdever;
 
-  @OneToMany(() => GrowdeverSkillEntity, (entity) => entity.growdever)
+  @OneToMany(() => GrowdeverSkillEntity, (entity) => entity.growdever, {
+    onDelete: "CASCADE",
+  })
   habilidadesDoGrowdever?: GrowdeverSkillEntity[];
 }
 
