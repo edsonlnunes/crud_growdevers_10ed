@@ -1,20 +1,15 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
-import { GrowdeverEntity } from "./growdever.entity";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
+import { EntidadeBase, GrowdeverEntity } from ".";
 
 @Entity({ name: "growdevers_skills" })
-export class GrowdeverSkillEntity {
-  @PrimaryColumn({ type: "uuid", nullable: false })
-  id!: string;
-
-  @Column({ type: "varchar", length: 100, nullable: false })
+export class GrowdeverSkillEntity extends EntidadeBase {
+  @Column()
   nome!: string;
 
-  @Column({ name: "growdever_id", type: "uuid", nullable: false })
+  @Column({ name: "growdever_id" })
   growdeverId!: string;
 
-  @ManyToOne(() => GrowdeverEntity, (entity) => entity.habilidadesDoGrowdever, {
-    onDelete: "CASCADE",
-  })
+  @ManyToOne(() => GrowdeverEntity, (entity) => entity.habilidadesDoGrowdever)
   @JoinColumn({ name: "growdever_id", referencedColumnName: "id" })
   growdever?: GrowdeverEntity;
 }

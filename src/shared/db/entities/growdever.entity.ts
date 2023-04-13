@@ -1,30 +1,25 @@
-import { Column, PrimaryColumn, Entity, OneToMany } from "typeorm";
+import { Column, Entity, OneToMany } from "typeorm";
 import { StatusGrowdever } from "../../../features/growdevers/enums";
-import { GrowdeverSkillEntity } from "./growdever-skill.entity";
+import { EntidadeBase, GrowdeverSkillEntity } from ".";
 
 @Entity({ name: "growdevers" })
-export class GrowdeverEntity {
-  @PrimaryColumn({ type: "uuid", nullable: false })
-  id!: string;
-
-  @Column({ type: "varchar", length: 100, nullable: false })
+export class GrowdeverEntity extends EntidadeBase {
+  @Column()
   nome!: string;
 
-  @Column({ name: "data_nascimento", type: "date", nullable: false })
+  @Column({ name: "data_nascimento" })
   dataNascimento!: Date;
 
-  @Column({ type: "varchar", length: 11, nullable: false, unique: true })
+  @Column()
   cpf!: string;
 
-  @Column({ type: "text", nullable: false })
+  @Column()
   senha!: string;
 
-  @Column({ type: "enum", enum: StatusGrowdever, nullable: false })
+  @Column({ type: "enum", enum: StatusGrowdever })
   status!: StatusGrowdever;
 
-  @OneToMany(() => GrowdeverSkillEntity, (entity) => entity.growdever, {
-    onDelete: "CASCADE",
-  })
+  @OneToMany(() => GrowdeverSkillEntity, (entity) => entity.growdever)
   habilidadesDoGrowdever?: GrowdeverSkillEntity[];
 }
 

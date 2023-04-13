@@ -80,7 +80,6 @@ export class GrowdeverRepository {
 
     try {
       const growdeverEntity = queryRunner.manager.create(GrowdeverEntity, {
-        id: randomUUID(),
         cpf: growdever.cpf,
         nome: growdever.nome,
         senha: growdever.senha,
@@ -94,7 +93,6 @@ export class GrowdeverRepository {
 
       for (const skill of growdever.habilidades) {
         const novaSkill = queryRunner.manager.create(GrowdeverSkillEntity, {
-          id: randomUUID(),
           nome: skill,
           growdeverId: growdeverEntity.id,
         });
