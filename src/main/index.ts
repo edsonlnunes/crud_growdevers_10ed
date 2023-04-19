@@ -17,7 +17,9 @@ app.use(routes());
 // Assim, garantimos que quando receber uma requisição,
 // a comunição com o banco de dados já estara feita.
 appDataSource.initialize().then(() => {
-  app.listen(process.env.PORT || 8080, () => console.log("API running..."));
+  app.listen(process.env.PORT || 8080, () =>
+    console.log("API running... sei la o que vou colocar aqui")
+  );
 });
 
 /**
