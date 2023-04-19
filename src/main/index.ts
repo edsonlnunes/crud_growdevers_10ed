@@ -4,7 +4,7 @@ import express from "express";
 import routes from "./routes";
 import cors from "cors";
 import "dotenv/config";
-import { appDataSource } from "./shared/db/data-source";
+import { appDataSource } from "../app/shared/db/data-source";
 
 const app = express();
 app.use(express.json());
@@ -17,7 +17,9 @@ app.use(routes());
 // Assim, garantimos que quando receber uma requisição,
 // a comunição com o banco de dados já estara feita.
 appDataSource.initialize().then(() => {
-  app.listen(process.env.PORT || 8080, () => console.log("API running..."));
+  app.listen(process.env.PORT || 8080, () =>
+    console.log("API running... alterada")
+  );
 });
 
 /**
